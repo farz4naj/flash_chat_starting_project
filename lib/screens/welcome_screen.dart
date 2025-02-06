@@ -13,13 +13,13 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProviderStateMixin {
 
-   late AnimationController controller;
-   late Animation animation;
-   @override
+  late AnimationController controller;
+  late Animation animation;
+  @override
   void initState() {
     super.initState();
     controller = AnimationController(vsync: this,
-    duration: const Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
     );
 
     animation = ColorTween(
@@ -36,8 +36,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
 
   @override
   void dispose() {
-     controller.dispose();
-     super.dispose();
+    controller.dispose();
+    super.dispose();
   }
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,9 +75,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
             const SizedBox(
               height: 48.0,
             ),
-        RoundedButton(title: 'Log In', color: kLoginButtonColor, onPressed: (){
-          Navigator.pushNamed(context, LoginScreen.id);
-        }),
+            RoundedButton(title: 'Log In', color: kLoginButtonColor, onPressed: (){
+              Navigator.pushNamed(context, LoginScreen.id);
+            }),
             RoundedButton(
               color: kRegisterButtonColor,
               title: 'Register',
@@ -91,4 +91,3 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
     );
   }
 }
-
