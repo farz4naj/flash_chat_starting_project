@@ -1,14 +1,17 @@
 import 'package:email_validator/email_validator.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat_starting_project/components/rounded_button.dart';
-import 'package:flash_chat_starting_project/services/auth_serice.dart';
-import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import '/constants.dart';
 import 'package:flutter/material.dart';
+
+import 'package:flash_chat_starting_project/services/auth_serice.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'chat_screen.dart';
 
 class RegistrationScreen extends StatefulWidget {
   static const String id = 'registration_screen';
+
+  const RegistrationScreen({super.key});
+
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
 }
@@ -18,9 +21,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String errorMessage = '';
-  bool errorOccured = false, showSpinner = false;
+  bool errorOccurred = false, showSpinner = false;
+
   @override
   Widget build(BuildContext context) {
+    print('rebuild');
     return Scaffold(
       backgroundColor: kBackgroundColor,
       body: ModalProgressHUD(
@@ -31,11 +36,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Hero(
-                tag: 'logo',
-                child: SizedBox(
-                  height: 200.0,
-                  child: Image.asset('images/logo.png'),
+              Flexible(
+                child: Hero(
+                  tag: 'logo',
+                  child: SizedBox(
+                    height: 200.0,
+                    child: Image.asset('images/logo.png'),
+                  ),
                 ),
               ),
               const SizedBox(
@@ -46,77 +53,84 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 child: Column(
                   children: [
                     TextFormField(
-                        decoration: kTextFieldDecoration.copyWith(
-                          hintText: 'Enter Your Email',
-                          labelText: 'Email',
-                        ),
-                        controller: _emailController,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        validator: (email){
-                          return email !=null && EmailValidator.validate(email) ? null :
-                          'please enter a valid email address.';
-                        }
+                      decoration: kTextFieldDecoration.copyWith(
+                        hintText: 'Enter your email',
+                        labelText: 'Email',
+                      ),
+                      controller: _emailController,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (email) {
+                        return email != null && EmailValidator.validate(email)
+                            ? null
+                            : 'Please enter a valid email';
+                      },
                     ),
                     const SizedBox(
                       height: 16,
                     ),
                     TextFormField(
-                      decoration:kTextFieldDecoration.copyWith(
-                        hintText: 'Enter Your Password',
+                      decoration: kTextFieldDecoration.copyWith(
+                        hintText: 'Enter your password',
                         labelText: 'Password',
                       ),
                       obscureText: true,
                       controller: _passwordController,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
-                      validator: (password){
-                        return password != null && password.length > 5 ? null : 'The Password should be at least 6 charecters.';
-                        },
+                      validator: (password) {
+                        return password != null && password.length > 5
+                            ? null
+                            : 'The password should be of 6 characters at least.';
+                      },
                     ),
                   ],
                 ),
               ),
-        
               const SizedBox(
                 height: 24.0,
               ),
               Visibility(
-                visible: errorOccured,
-                child: Text(errorMessage,
-                textAlign: TextAlign.center,
+                visible: errorOccurred,
+                child: Text(
+                  errorMessage,
+                  textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.red, fontSize: 16),
                 ),
               ),
-              RoundedButton(title: 'Register', color: kRegisterButtonColor,
-                onPressed: () async{
-            if (_formKey.currentState!.validate()) {
-        try{
-          setState(() {
-            errorOccured = false;
-            showSpinner = true;
-          });
-          await AuthService()
-              .createUserWithEmailAndPassword(
-              email: _emailController.text,
-              password: _passwordController.text
-          )
-              .then((value) {
-            Navigator.pop(context);
-            Navigator.pushNamed(context, ChatScreen.id);
-          });
+              RoundedButton(
+                color: kRegisterButtonColor,
+                title: 'Register',
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    try {
+                      setState(() {
+                        errorOccurred = false;
+                        showSpinner = true;
+                      });
 
-          setState(() {
-            showSpinner = false;
-          });
+                      await AuthService()
+                          .createUserWithEmailAndPassword(
+                        email: _emailController.text,
+                        password: _passwordController.text,
+                      )
+                          .then((value) {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, ChatScreen.id);
+                      });
 
-        }catch(e){
-          print('ERORR ${e.toString()}');
-          setState(() {
-            showSpinner = false;
-            errorOccured = true;
-            errorMessage = e.toString().split('] ')[1];
-          });
-        }
-            }},),
+                      setState(() {
+                        showSpinner = false;
+                      });
+                    } catch (e) {
+                      print('ERROR ${e.toString()}');
+                      setState(() {
+                        showSpinner = false;
+                        errorOccurred = true;
+                        errorMessage = e.toString().split('] ')[1];
+                      });
+                    }
+                  }
+                },
+              ),
               const SizedBox(height: 12),
               IconButton(
                 icon: const Icon(Icons.arrow_back),
